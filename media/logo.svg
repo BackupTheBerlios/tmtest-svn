@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.42"
+   inkscape:export-filename="tmtest.logo"
+   inkscape:export-xdpi="99.879997"
+   inkscape:export-ydpi="99.879997"
+   sodipodi:docbase="/home/bronson/tmtest"
+   sodipodi:docname="logo.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="5.6000000"
+     inkscape:cx="171.65625"
+     inkscape:cy="685.18223"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     inkscape:window-width="1072"
+     inkscape:window-height="919"
+     inkscape:window-x="400"
+     inkscape:window-y="139" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:56.615429px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125.00000%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:URW Palladio L"
+       x="111.20888"
+       y="312.30783"
+       id="text1306"
+       sodipodi:linespacing="125.00000%"
+       transform="scale(0.847825,1.179488)"
+       inkscape:export-xdpi="357.39001"
+       inkscape:export-ydpi="357.39001"><tspan
+         sodipodi:role="line"
+         id="tspan1308"
+         x="111.20888"
+         y="312.30783"
+         dx="2.5000007 -1.2500005">tm</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:56.615383px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125.00000%;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1.0000000;stroke:none;stroke-width:1.0000000px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1.0000000;font-family:URW Palladio L"
+       x="228.25053"
+       y="311.30014"
+       id="text5795"
+       sodipodi:linespacing="125.00000%"
+       transform="matrix(0.847825,0.000000,-0.133768,1.179488,0.000000,0.000000)"
+       inkscape:export-xdpi="357.39001"
+       inkscape:export-ydpi="357.39001"><tspan
+         sodipodi:role="line"
+         id="tspan5797"
+         x="228.25053"
+         y="311.30014"
+         dx="-5.5357132 -5.5357132 -4.464283 -5.7142835">test</tspan></text>
+  </g>
+</svg>
