@@ -1,0 +1,30 @@
+# Diff
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# tests tmtest -d
+
+# updated for 2.0 on 27 Jan 2005
+
+
+tmtest -d - <<-EOL
+    echo "right output"
+    STDOUT:
+    wrong output
+EOL
+
+
+MODIFY:
+    s/^\-\-\-.*/--- \/tmp\/STDIN-pid.unique DATE TIME TZ/
+    s/^\+\+\+.*/+++ - DATE TIME TZ/
+
+
+STDOUT:
+--- /tmp/STDIN-pid.unique DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,3 +1,5 @@
+     echo "right output"
+     STDOUT:
+     wrong output
++STDOUT:
++right output

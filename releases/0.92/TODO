@@ -1,0 +1,71 @@
+1.0:
+- Make "make test" work.
+- write tests for nesting testfiles with --config.
+        // If the user specifies a config file, we only check directories
+        // not above the given config file.  i.e. if user specifies
+        // "tmtest -c /a/b/cc /a/t/u/t.test", we will look for config files
+        // in /a/t/tmtest.conf and /a/t/u/tmtest.conf.
+
+- Add STDOUT: trimws and STDERR: trimws - to trim whitespace from
+  the front of each output line.
+- It's silly to have the utilities all in separate files.
+  Should have a standard tmtest library that includes the most useful ones,
+  installed in /usr/share (or some other shared dir) by default.
+- get rid of all the exit(10) calls in test.c.  We need a better way to
+  abort the test.
+  should get rid of a whole bunch in main.c as well.
+  this should prevent us from dropping turds in /tmp all the time too.
+- what do we do when stdout is missing a newline at the end?
+  Test that both raw and modified work when stdout doesn't have a newline.
+  Check that diff works too.
+- Get rid of AUTHOR and DATE in all the test files and docs.
+  We'll purge it from the code in a year if it looks like a good idea.
+
+1.2:
+- stdin is all buggered up.  why is it that "cat" with no args will print
+  the rest of the test script?  And why is it that if you fork, diff freezes?
+  They're related problems I suspect.
+- Could take tests from tarfiles.  We would decompress the tarfile into
+  a temporary directory, run the test, and delete the tarfile.  This will
+  make it easier to maintain tests that all need to be run in a certain
+  directory hierarchy.
+- Tighten up printing a folder name when there are no files in it.  No need for double spacing.
+- Change the I/O scheme to be event based.  Get rid of the tempfiles.
+  Convert to using the async io library.  Don't use temporary files.
+  This would allow us to recognize that the test is disabled before
+     producing a partial diff, thus saving the user from blowing away his files.
+- Add the ability to run multiple tests from one testfile
+- allow multiple s/// expressions on a single line.  will probably require modifications to pcrs_compile_command, so make it support buf/len at the same time.
+- add the ability to run valgrind over each test and print success/failure of that.
+- add gcov support so you can see what sort of coverage your tests provide.
+
+?:
+- Shouldn't run every test in a dir if the DISABLED directive is in a config file.
+  Should discover what dir the DISABLED directive came from and refuse
+  to run anything below that.
+- Rewrite the test date and author if they aren't supplied.
+- should probably indent stdout and stderr clauses two spaces.  otherwise
+  we might misinterpret STDOUT: and STDERR: in a stdout or stderr clause.
+- Provide some sort of XML output.
+- it's stupid to dup the str just to null-terminate it so it can be passed to pcrs.
+  modify pcrs to compile buffers too.
+
+????:
+- Unify the line modifier in compare.c and test.c.  It's hackish now.
+- There should be a way to repeatedly run a single test with only tiny
+  differences.  i.e. test all permeutations of DISABLE DISABLE:
+  DISABLED DISABLED:  Hopefully that will clean up 05-08-Disable/Abort.test
+- There should be a way of discovering that you copied a file and changed
+  its functionality.  that way, tmtest will update its author and date.
+- Add a timeout that will terminate stalled tests.  You can set the timeout in the config file.
+
+
+
+- Wow, the pcrs error messages suck.  Is there any way to improve them?
+  "(pcrs:) Syntax error while parsing command (-11)."
+
+
+maybe never:
+- add a CLEAR_EACHLINE or CLEAR_MODIFY option to to turn off all substitutions.
+  It would be easy to do.  I'm just not convinced that anyone would find it useful.
+

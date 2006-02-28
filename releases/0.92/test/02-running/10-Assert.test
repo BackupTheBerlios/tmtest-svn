@@ -1,0 +1,21 @@
+AUTHOR='Scott Bronson'
+DATE='2005-01-27'
+
+# Verifies that the assert command works.
+
+# Normally tmtest runs from /tmp, so no config files are read.
+# However, the ASSERT defined by the config files.  Therefore,
+# we need to set the cwd back into the test tree so the subtest
+# will read the config files.
+cd "$TESTDIR"
+
+tmtest $CFG -q - <<-EOL
+	ASSERT 1 -eq 1
+	echo it ran
+	STDOUT:
+	it ran
+EOL
+STDOUT:
+ok   (STDIN) 
+
+1 test run, 1 success, 0 failures.

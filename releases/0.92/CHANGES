@@ -1,0 +1,8 @@
+- install now installs config files too.
+- Added the --config option to override default config files.
+- Added timing information to test summary.  Disable with new -q option.
+- Created tmlib, a "standard library" for tests.
+- We now stop running all tests if any test aborts.  DISABLE stops the current
+  test but lets all other tests finish; ABORT stops testing altogether.
+- Tests now start with /tmp as the cwd, not the testdir.
+  The testdir is supplied in $TESTDIR (or $MYDIR inside the testfile)

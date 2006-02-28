@@ -1,0 +1,30 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# Verifies what happens when a diff is aborted.
+
+
+
+tmtest -d - <<-EOL
+	ABORT
+	echo "right output"
+	STDOUT:
+	right output
+EOL
+
+
+MODIFY:
+	s/^\-\-\-.*/--- \/tmp\/STDIN-pid.unique DATE TIME TZ/
+	s/^\+\+\+.*/+++ - DATE TIME TZ/
+
+
+STDOUT:
+--- /tmp/STDIN-pid.unique DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,4 +1,2 @@
+ ABORT
+ echo "right output"
+-STDOUT:
+-right output
+STDERR:
+ERROR Test was aborted

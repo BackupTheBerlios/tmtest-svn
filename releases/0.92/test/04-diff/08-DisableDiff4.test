@@ -1,0 +1,33 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# Verifies what happens when a diff is disabled and gives 
+# only whitespace as a reason.
+
+# Just like 08-Disable4.test, I'd like to know why the colon isn't
+# printed after the "ERROR Test is disabled".  TODO.
+
+
+tmtest -d - <<-EOL
+	DISABLED: "   "
+	echo "right output"
+	STDOUT:
+	wrong output
+EOL
+
+
+MODIFY:
+	s/^\-\-\-.*/--- \/tmp\/STDIN-pid.unique DATE TIME TZ/
+	s/^\+\+\+.*/+++ - DATE TIME TZ/
+
+
+STDOUT:
+--- /tmp/STDIN-pid.unique DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,4 +1,2 @@
+ DISABLED: "   "
+ echo "right output"
+-STDOUT:
+-wrong output
+STDERR:
+ERROR Test is disabled
