@@ -1,0 +1,29 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# Verifies what happens when a test is aborted and gives 
+# only whitespace as a reason.
+
+# this is really weird...  I would expect the colon to be printed
+# because we DO have a disabled reason -- it's just empty.  But
+# for some reason it's not.  I'd like to know why.  TODO
+# dis  (STDIN)                   :    
+
+
+tmtest -q - <<-EOL
+	ABORT: "   "
+	echo "right output"
+	STDOUT:
+	wrong output
+EOL
+
+
+MODIFY:
+	s/^\-\-\-.*/--- \/tmp\/STDIN-pid.unique DATE TIME TZ/
+	s/^\+\+\+.*/+++ - DATE TIME TZ/
+
+
+STDOUT:
+ABRT (STDIN)                   
+
+1 test run, 0 successes, 1 failure.

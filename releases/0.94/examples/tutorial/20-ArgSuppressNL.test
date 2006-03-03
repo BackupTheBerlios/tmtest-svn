@@ -1,0 +1,3 @@
+echo -n "No newline"
+STDOUT: -n
+No newline

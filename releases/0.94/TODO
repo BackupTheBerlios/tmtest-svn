@@ -1,0 +1,125 @@
+0.96:
+- Put $args into EVERY test we run.
+- There's some sort of a bug with 10-DumpScript.test.  When running with
+  -o or -d, sometimes it complains about a missing newline.  Odd.
+- Write a test to ensure we can run tests named "-.test"
+- Write tests to verify what FDs are still open when we run
+  config files, test files, and diff.
+- Add --diff and --shell to change the executables that get launched.
+- Get rid of MODIFY clauses.  It's unnecessary complexity.
+  And it's a LOT.  First remove it from the tests, then from the code.
+- Add the ability to specify test arguments on the command line.
+  I'm picturing something where VAR=val on the command line would be
+  inserted without change into the template.  That way you can use the
+  command line to override default settings in the testfile.
+  - This would allow us to test almost every test to ensure it
+    supports the --config argument (make them DISABLED or something).
+- write tests for nesting testfiles with --config.
+        // If the user specifies a config file, we only check directories
+        // not above the given config file.  i.e. if user specifies
+        // "tmtest -c /a/b/cc /a/t/u/t.test", we will look for config files
+        // in /a/t/tmtest.conf and /a/t/u/tmtest.conf.
+- get rid of all the exit(10) calls in test.c.  We need a better way to
+  abort the test.
+  should get rid of a whole bunch in main.c as well.
+  this should prevent us from dropping turds in /tmp all the time too.
+- Rename --all-files to --ignore-extension.
+- Move newline suppressing out of compare.c.  If it can't be moved out,
+  at least clean it up!   (maybe?)
+- Figure out how to ensure that we run the binary in the project tree
+  when testing rather than the globally installed one.  What happened?
+- Ensure it compiles and runs on freebsd.
+
+0.98:
+- Change the I/O scheme to be event based.  Get rid of the tempfiles.
+  Convert to using the async io library.  Don't use temporary files.
+  This would allow us to recognize that the test is disabled before
+  producing a partial diff, blowing away output sections.
+  - Make sure to keep reading both stdin and stderr to eof.
+  - This also allows us to get rid of STATUSFD so that NO other fds are open
+    when running the test.  OUTFD and ERRFD still need to be open when
+	running the config files though.
+- Use i/o lib for everything.  No need for temp files.
+  This means that we stream everything EXCEPT stderr, which we memory
+  buffer.  If your stderr is more than 100K or so in size, just redirect
+  it to a file, then cat the file at the end.  We truncate stderr if it
+  gets too big.
+- stdin is all buggered up.  why is it that "cat" with no args will print
+  the rest of the test script?  And why is it that if you fork, diff freezes?
+  They're related problems I suspect.
+    Is it because I'm forgetting to close all open filehandles before forking?
+- Shouldn't run every test in a dir if the DISABLED directive is in a config
+  file.
+  Should discover what dir the DISABLED directive came from and refuse
+  to run anything below that.
+  - Yes, if a config file returns DISABLED, then that folder and all its
+    subfolders are skipped.  Just make the test itself call the DISABLED
+	command if you want testing to continue in that subfolder.
+- Tighten up printing a folder name when there are no testfiles in it.
+  No need for double spacing.
+- Add a --continuous argument that will cycle through all tests tmtest
+  can find.  It prints nothing if a test succeeds, or the fail notice
+  if it fails.  Runs until cancelled with ^C.  Let it run overnight and
+  see if any of your tests have intermittent failures.
+
+1.0!
+
+1.2:
+- Add the ability to run multiple tests from one testfile.
+  See tmtest 0.8 for a potential implementation of this.
+  All we'd need to add is a framework to notify the user that multiple
+  tests are in progress; bash can take care of the rest.
+
+?:
+- add gcov support so you can see what sort of coverage your tests provide.
+- Provide some sort of automatable XML output?
+- Could take tests from tarfiles.  We would decompress the tarfile into
+  a temporary directory, run the test, and delete the tarfile.  This will
+  make it easier to maintain tests that all need to be run in a certain
+  directory hierarchy.
+- add the ability to run valgrind over each test and print success/failure
+  of that.  (gives deep valgrind coverage)
+  - One problem with this will be all the false warnings that valgrind spews.
+- Get rid of exNEW and all the definitions from tfscan.h.  It's uuuugly!
+  Not quite sure how... I mean, I see how to clean it up some but not
+  a lot.  Probably not worth it.  It's an ugly problem.
+- Is it possible to add a SECOND diff to the output from tmtest -d to
+  add a "-n" to the output section?  That way, instead of printing a
+  warning telling the user what to edit, we could just fix it ourselves.
+  See 18-NoNLWarn.test for more.
+- Maybe make an option to run the command from a pty so it looks just
+  like the user is running the command.
+
+No longer a problem when we dump pcrs:
+- allow multiple s/// expressions on a single line.  will probably require
+  modifications to pcrs_compile_command, so make it support buf/len at the
+  same time.  These might be non-trivial changes...
+- it's stupid to dup the str just to null-terminate it so it can be passed
+  to pcrs.  Modify pcrs to compile buffers too.
+- Unify the line modifier in compare.c and test.c.  It's hackish now.
+- Wow, the pcrs error messages truly suck.  Is there any way to improve them?
+  "(pcrs:) Syntax error while parsing command (-11)."
+- add a CLEAR_EACHLINE or CLEAR_MODIFY option to to turn off all substitutions.
+  It would be easy to do.  I'm just not convinced that anyone would find it
+  useful.
+
+????:
+- There should be a way to repeatedly run a single test with only tiny
+  differences.  i.e. test all permeutations of DISABLE DISABLE:
+  DISABLED DISABLED:  Hopefully that will clean up 05-08-Disable/Abort.test
+- Add a timeout that will terminate stalled tests.  You can set the timeout
+  in the config file or the test itself.
+
+maybe never:
+- Add STDOUT: trimws and STDERR: trimws - to trim whitespace from
+  the front of each output line.
+  I wanted to add this to simulate the "STDOUT=<<-EOL" heredoc sequence
+  of the original tests (that is nestable, unlinke Bash's.  But now I
+  realize that this problem is pretty much solved from the other direction.
+  Instead of removing indentation from the heredoc, simply add indentation
+  using a MODIFY section (as detailed in the FAQ).
+- Add a "FAILURE-OK" flag for when failure IS an option.  This would print
+  that the test failed, but would not highlight it, and would not count
+  either positively or negatively toward the test results.  That way you
+  can include experimental tests in a production test stack (say you're
+  developing a test and want to know if it's a good idea...)

@@ -1,0 +1,11 @@
+# Verifies that we correctly report unknown short switches
+
+tmtest $args -z - <<-EOL
+	echo Howdy
+	STDOUT:
+	Howdy
+EOL
+
+RESULT: 1
+STDERR:
+tmtest: invalid option -- z

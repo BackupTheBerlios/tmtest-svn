@@ -1,0 +1,202 @@
+=head1 NAME
+
+tmtest - Makes functional tests as easy to write as shell scripts.
+
+=head1 SYNOPSIS
+
+B<tmtest> [B<-d>|B<-o>] [I<dir>|I<testfile>...]
+
+=head1 DESCRIPTION
+
+
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<--all-files>
+
+Causes tmtest to ignore the name of the testfile while running tests.
+
+Normally tmtest only runs files with names that end in ".test".
+While this is often a very good thing (you wouldn't want tmtest
+to try to run just any old random file as a test), sometimes it
+gets in the way.  For instance, MKFILE offers no control over the
+name of the file generated.  If you used MKFILE to create a
+testfile, run tmtest with --all-files and name the testfile explicitly
+on the command line.
+
+See 10-Patch.test for an example.  (TODO: cobble together a better example)
+
+=item B<-c> B<--config>
+
+Specifies the config file to be read before running the test file.
+Prevents the standard config files (/etc/tmtest.conf, /etc/tmtest/tmtest.conf,
+~/.tmtestrc) from being read.  Also doesn't read config files unless they
+are below the directory that contains the specified file.
+
+=item B<-d> B<--diff>
+
+Prints a diff of the expected results against the actual results.
+The expected results are the lines prefixed with a '-',
+and the actual results are prefixed with a '+'.
+In other words, the '+' lines are ones that the test erroneously added,
+and the '-' lines are ones that the test erroneously didn't print.
+
+You can pipe the output straight into the patch
+program to modify the test files.  This works when running tests
+in subdirectories too, but you need to invoke C<patch -p0> becaue
+the patch utility doesn't enter subdirectories by default.
+
+    tmtest -d | less        # view patch to ensure no bad changes
+    tmtest -d | patch -p0   # update every testfile.  Beware!
+
+DANGER!!!  This is the perfect way to let subtle bugs slip
+into your test deck.  Make sure you know exactly what you
+changed, right down to the whitespace.
+
+=item B<-q> B<--quiet>
+
+Tells tmtest to be quiet while running tests.  tmtest only prints the
+test results, and a final passed/failed/disabled summary.  So, it's
+quieter than it normally is but it certainly isn't silent.
+
+=back
+
+=head1 TESTFILE
+
+=over 8
+
+=item MODIFY
+
+Specifies a perl-compatible substitution command to be executed
+on each line of the program's output.  For instance,
+the following modify clause will replace DATE='2005-10-02' with
+DATE='DATE DATE'.
+
+	MODIFY: s/DATE='.*'/DATE='DATE DATE'/
+
+Due to a pcrs limitation, you may only specify one substitution
+command per MODIFY clause.  ("MODIFY: s/1/one/ s/2/two/" will not
+work.
+
+=back
+
+=head1 CONFIGURATION
+
+tmtest reads its configuration first from F</etc/tmtest.conf> and
+F<~/.tmtest.conf>.  Then it starts at the root directory and works
+its way up to the current directory looking for files named "tmtest.conf"
+Therefore, /home/test/a/b/tmtest.conf overrides /home/test/tmtest.conf
+(because the latter is read and executed before the former).
+It executes each config files every time it runs a test.  If you're
+running 40 tests, your config files will each get executed 40 times.
+
+Note that while config files are running, the current directory
+is set to the testfile's directory.  For convenience, in each
+config file, the MYFILE variable gives the full pathname to the config
+file, and MYDIR gives just the directory portion (MYFILE and MYDIR
+are available when running the test script too -- MYDIR is just the
+current working directory).
+
+Any output produced by the config files goes straight to the screen.
+It will not contaminate the test results.  tmtest only cares about
+the output produced by the testfile itself.
+
+=over 8
+
+=item ABORT
+
+Causes the test to abort immediately.  You can optionally specify
+a message.  See the example in L</MKDIR>.
+
+    ABORT: too bad this test won't live
+
+=item DISABLE
+=item DISABLED
+
+Marks the test disabled.  If put in a config file, marks all tests in
+that directory and all subdirectories disabled.
+
+You can supply a reason string too
+
+   DISABLED: this test is just too lame.
+
+=back
+
+=head1 EXIT VALUE
+
+tmtest returns a nonzero error code only if one or more tests
+could not be run for some reason.  If all tests are successfully run,
+even if they all fail, tmtest returns 0.
+
+=head1 SUGGESTIONS
+
+Look in the "examples" directory that came with this distribution.
+You may find some helpful utilities.
+
+If you want to be more pedantic, you might want to "set -e" in your
+test file or configuration file.  This will make it so the test will
+stop at the very first command that returns a nonzero exit status.
+
+If you can't figure out what your test is doing, you might want
+to add "set -v" or "set -x" to the top of the testfile.  This will
+show you line-by-line what is happening.  You can also put them in
+a config file if you're having configuration issues.
+
+Never create files in /tmp with static or easily predictable file names.
+This opens you up to symlink attacks.  Instead, use mktemp(1)
+or tempfile(1).  Also check the examples directory for functions
+to make working with files easier.
+
+	file=`mktemp -t 02-XXXXXX` || ABORT can't mktemp.
+
+=head1 FAQ
+
+How do I indent my stdout section?  My test prints the word "STDOUT" at
+the beginning of the line, causing tmtest to choke on the multiple STDOUT
+sections.
+
+A: Yes, tmtest is pedantic about finding sections in a file.  This is
+because it can be easy to get confused about what line applies where.
+Easiest just to ensure that there is a single section.
+
+But what to do if your test's output would contain a section break?
+Simply indent every line of your test's output by some number of spaces:
+
+	MODIFY : s/^(.)/   $1/
+
+The complex expression is because some versions of pcrs mistakenly
+add two spaces after tine final newline.  This ensures that the line
+actually contains a character before indenting it.
+
+=head1 HISTORY
+
+The original tmtest script was written in June of 2000 when I got frustrated
+with the TrestleMail mail relay program.  TrestleMail, now large and complex,
+required some serious reorganization.  I wrote tmtest as a quick one-off Perl
+hack to allow me to tear TrestleMail to shreds and have some hope of getting
+the peices back together.
+
+The Perl version was too slow and its testfile format took some learking.
+So, in early 2005, I rewrote the good parts in C and tried to make it as
+much like Bash as possible.
+
+=head1 LICENSE
+
+tmtest is distributed under the Lesser General Public License.
+See the COPYING file included with this tmtest distribution for
+more details or L<http://www.gnu.org/copyleft/lesser.html>.
+
+=head1 FILES
+
+L<tmtest.conf(5)>
+
+=head1 SEE ALSO
+
+L<testfile(1)>, L<tmtest.conf(5)>
+
+=head1 AUTHOR
+
+Scott Bronson <S<bronson@rinspin.com>>
+
