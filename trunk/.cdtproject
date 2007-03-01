@@ -54,13 +54,6 @@
 </item>
 <item id="org.eclipse.cdt.make.core.buildtargets">
 <buildTargets>
-<target name="zutest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
-<buildCommand>make</buildCommand>
-<buildArguments></buildArguments>
-<buildTarget>zutest</buildTarget>
-<stopOnError>false</stopOnError>
-<useDefaultCommand>true</useDefaultCommand>
-</target>
 <target name="units" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
 <buildCommand>make</buildCommand>
 <buildArguments></buildArguments>
