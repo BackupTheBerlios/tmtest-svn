@@ -75,6 +75,20 @@
 <stopOnError>true</stopOnError>
 <useDefaultCommand>true</useDefaultCommand>
 </target>
+<target name="mutest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>mutest</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+</target>
+<target name="run-mutest" path="" targetID="org.eclipse.cdt.make.MakeTargetBuilder">
+<buildCommand>make</buildCommand>
+<buildArguments></buildArguments>
+<buildTarget>run-mutest</buildTarget>
+<stopOnError>true</stopOnError>
+<useDefaultCommand>true</useDefaultCommand>
+</target>
 </buildTargets>
 </item>
 </data>
