@@ -1,7 +1,0 @@
-# What happens when we diff an empty test file?
-
-# Diff should produce no data since nothing differs from the default.
-
-$tmtest -d - <<-EOL
-EOL
-

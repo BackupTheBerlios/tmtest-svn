@@ -1,8 +1,0 @@
-{
-  echo output1
-  echo output2
-} | INDENT
-
-STDOUT:
-    output1
-    output2

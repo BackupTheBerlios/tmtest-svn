@@ -1,6 +1,0 @@
-TODO: 
-- Get rid of the next field from minibufs.
-- Make logging thread-safe.  Probably need to add log to a minibuf, add minibuf to a queue
-- Add counters to unit tests.  Make a snapshot_counters call that will save the state of the counters,
-	and a diff_counters that will show counter deltas.  We can then specify what diffs are expected.
-	If the code finds an unexpected diff, the unit test fails.
