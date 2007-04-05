@@ -1,0 +1,25 @@
+THREADING
+
+errno is safe.  It expands to a macro that calls a function that returns a unique, thread-safe location for an errno value.
+strerror is unsafe.  We should never, ever call strerror; we'll use the logging infrastructure instead.  strerror_r is the POSIX replacement.
+
+
+ON D
+
+I can see that I'm really abusing function pointers in C.  The problem is, I don't see any alternative!
+(switch statements would be even worse)  This is the price you pay for extreme modularity and flexibility.
+Well, there's one alternative: port the program to D.
+
+D looks very, very interesting.  I think that it would clean up the spaghettiof function pointers that
+currently comprises the minio framework.  The problem is, it's an unknown quantitiy...  It is a very
+new language, and probably subject to obscure bugs and performance issues.  I feel like we need to
+get far enough with the C version that we can ensure through repeatable testing that we're well above
+our performance floor.  Then we can branch and incrementally start moving stuff to D.  If D works,
+then great!  If not, then we still haven't lost anything.
+
+I hate the tangled mess of function pointers as much as you do...  Alas, in the name of caution, we need
+to endure it for now.
+
+
+
+http://linux-net.osdl.org/index.php/TCP_memory_documentation

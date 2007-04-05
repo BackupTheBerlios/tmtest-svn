@@ -1,0 +1,203 @@
+=head1 NAME
+
+proxy - Modular, fast, userspace proxy daemon
+
+=head1 SYNOPSIS
+
+B<proxy> [B<-v>|B<-v>] [I<no>|I<args?>...]
+
+=head1 DESCRIPTION
+
+Forward incoming data to outgoing sockets and vice versa.
+It's the configuration that gets complex.
+
+=head1 OPTIONS
+
+=over 8
+
+=item B<-c> B<--config>
+
+Specifies configuration locations to be read on startup.
+You may specify a file/fifo/unix-domain-socket to read,
+a socket to listen on ([addr]:port), or '-' to read from
+stdin.  You may specify any number of config locations.
+
+=back
+
+=head1 CONFIGURATION
+
+Configuration is supplied via a very simple text format.  Configuration
+options take effect immediately; there's no need to close the file.
+We will not even try to keep the configuration directives up-to-date
+in this document.
+
+=over 8
+
+=item name=val
+
+Each line has the format name=val.  Names can never include an equals sign.
+Names can be hierarchical...  Hierarchy is indicated by ! (because often
+you'll need to include paths in names).
+
+=item comments
+
+Any line starting with # is ignored.
+
+=item line continuations
+
+If a line ends with \, it is continued on the following line.
+
+=item whitespace
+
+TODO: All unquoted whitespace is compressed down into a single space.
+TODO: I don't think we even support quoting yet?
+
+=head1 EXIT VALUE
+
+=over 4
+
+=item 0
+
+Proxy exited normally, say by a configuration directive.
+
+=item 1 - internal_error
+
+An internal error was found at runtime, proxy aborted itself.
+
+=item 2 - argument_error
+
+Proxy could not read enough configuration information to start its
+event loop (or, I supose, proxy received configuration information
+that prevented it from continuing to operate but I can't imagine
+what that could be).
+
+=item 3 - runtime_error
+
+Proxy ran into a catastrophic problem while running.  This probably
+means a lack of resrouces
+
+=back
+
+=head1 TESTFILE
+
+=over 8
+
+=back
+
+=head1 TEST RESULTS
+
+There are two schools of thought on how testfiles should be written:
+- like a shell script, where you need to manually check after the
+commands that matter if they failed or not.
+
+	command
+	[ $? != 0 ] && echo got $? from command && exit $?
+
+- like a makefile, where the first command that returns a nonzero
+exit status causes the whole process to bail out.
+
+	command
+	# no need to check; if it returned nonzero, the script already exited.
+
+tmtest uses the first technique by default; it treats testfiles like
+shell scripts.
+
+To make your testfile bail the instant it encounters an error, add
+the command "set -e" to it.  If any subsequent command returns an
+error, everything will bail out.  Add "set +e" to turn this behavior
+back off.  You may also want to "set -o pipefail" as well.
+
+If your testfiles are trivial, it probably makes sens to use -e to
+save yourself a lot of manual checking.  Otherwise, the default of
++e is probably the safest, most understandable way to write tests.
+
+=head1 TESTFILE SUGGESTIONS
+
+Look in the "examples" directory that came with this distribution.
+You may find some helpful utilities.
+
+If you can't figure out what your test is doing, you might want
+to add "set -x" to the top of the testfile.  This will
+show you line-by-line what is happening (use "set -v" if "set -x"'s
+command-line substitution produces hard-to-read results).
+You can also put them in
+a config file if you're having configuration issues.
+
+Never create files in /tmp with static or easily predictable file names.
+This opens you up to symlink attacks.  Instead, use mktemp(1)
+or tempfile(1) (tmtest's built-in helpers use mktemp).
+Also check the examples directory for functions
+to make working with files easier.
+
+	file=`mktemp -t 02-XXXXXX` || ABORT can't mktemp.
+
+=head1 FAQ
+
+How do I indent my stdout section?  My test prints the word "STDOUT" at
+the beginning of a line, causing tmtest to complain about multiple STDOUT
+sections.
+
+=over 4
+
+Answer: run your command's output through indent.
+
+	mycmd | INDENT
+
+If you have multiple commands, you can use parentheses to collect the
+output:
+
+	(	cmd1
+		cmd2
+	) 2>&1 | INDENT
+
+=back
+
+How do I retrieve my test program's exit result?
+
+=over 4
+
+Answer: use the shell variable $?:
+
+    myprogram
+	echo RESULT: $?
+
+tmtest used to provide a RESULT section that automatically checked a
+command's result value.  The problem is, most testfiles contain
+multiple commands, with cleanup code, etc.  To ensure that tmtest
+reads the correct value of $? would require drastic restrictions
+on the things a testfile may do.  We decided that it was much better
+to force the user to insert $? in the proper spot rather than add
+a whole bunch of arbitrary restrictions.
+
+=back
+
+=head1 HISTORY
+
+The original tmtest script was written in June of 2000 when I got frustrated
+with the TrestleMail mail relay program.  TrestleMail, now large and complex,
+required some serious reorganization.  I wrote tmtest as a quick one-off Perl
+hack to allow me to tear TrestleMail to shreds and have some hope of getting
+the peices back together.
+
+The Perl version was too slow and its testfile format took some learking.
+So, in early 2005, I rewrote the good parts in C and tried to make it as
+much like Bash as possible.
+
+=head1 LICENSE
+
+tmtest is distributed under the Lesser General Public License.
+See the COPYING file included with this tmtest distribution for
+more details or L<http://www.gnu.org/copyleft/lesser.html>.
+
+=head1 FILES
+
+L<tmtest.conf(5)>
+
+=head1 SEE ALSO
+
+L<testfile(1)>, L<tmtest.conf(5)>
+
+=head1 AUTHOR
+
+Scott Bronson <S<bronson@rinspin.com>>
+
