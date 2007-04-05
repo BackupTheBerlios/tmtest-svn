@@ -1,0 +1,38 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# tests that diff works on multiple files (tmtest -d file1 file2)
+# updated for 2.0 on 29 Jan 2005
+
+
+
+MKFILE t1 <<-EOF
+	echo "test 1 right output"
+	STDOUT:
+	test 1 wrong output
+EOF
+
+MKFILE t2 <<-EOF
+	echo "test 2 right output"
+	STDOUT:
+	test 2 wrong output
+EOF
+
+$tmtest --ignore-extension -d "$t1" "$t2" | FIX_DIFF
+
+
+STDOUT:
+--- /tmp/FILE DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,3 +1,3 @@
+ echo "test 1 right output"
+ STDOUT:
+-test 1 wrong output
++test 1 right output
+--- /tmp/FILE DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,3 +1,3 @@
+ echo "test 2 right output"
+ STDOUT:
+-test 2 wrong output
++test 2 right output

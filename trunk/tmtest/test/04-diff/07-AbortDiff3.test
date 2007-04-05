@@ -1,0 +1,26 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# Verifies what happens when a diff is aborted and gives a reason
+# without a colon.  This should be OK.
+
+
+
+$tmtest -d - <<-EOL | FIX_DIFF
+	ABORT This is the reason
+	echo "right output"
+	STDOUT:
+	wrong output
+EOL
+
+
+STDOUT:
+--- /tmp/FILE DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,4 +1,2 @@
+ ABORT This is the reason
+ echo "right output"
+-STDOUT:
+-wrong output
+STDERR:
+ERROR Test was aborted: This is the reason

@@ -1,0 +1,43 @@
+# This is like 16-ConfigError except that it uses our default
+# config files which mark us pedantic.  This should preven the
+# tests from being run if there are config errors.
+
+# TODO: this pipes stderr to stdout so it can be rewritten.
+# That's bad news and needs to be fixed.
+
+
+MKDIR dir
+cd "$dir"
+
+cat > tmtest.conf <<-EOs
+	# make the config file pedantic.
+	set -e
+	dotheyspeakbocceonwhat
+EOs
+
+cat > t1.test <<-EOs
+	echo hi
+	STDOUT:
+	hi
+EOs
+
+cat > t2.test <<-EOs
+	echo he
+	STDOUT:
+	he
+EOs
+
+$tmtest -q 2>&1 | REPLACE "$dir" /tmp/DIR
+rm tmtest.conf t1.test t2.test
+
+
+STDOUT:
+/tmp/DIR/tmtest.conf: line 3: dotheyspeakbocceonwhat: command not found
+/tmp/DIR/tmtest.conf: line 3: dotheyspeakbocceonwhat: command not found
+
+Processing .
+ERR  t1.test                   error in /tmp/DIR/tmtest.conf
+ERR  t2.test                   error in /tmp/DIR/tmtest.conf
+
+2 tests run, 0 successes, 2 failures.
+STDERR:

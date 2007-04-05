@@ -1,0 +1,20 @@
+# Ensure we emit a warning if we notice multiple STDOUT sections.
+
+
+$tmtest -q - <<-EOL
+	# tmtest will use the empty section which comes first.
+	# Therefore, since the test actually does produce output,
+	# this test is expected to fail.
+
+	echo Howdy
+	STDOUT :
+	STDOUT :
+	Howdy
+EOL
+
+STDERR:
+(STDIN) line 7 Error: duplicate STDOUT section.  Ignored.
+STDOUT:
+FAIL (STDIN)                   O.  stdout differed
+
+1 test run, 0 successes, 1 failure.

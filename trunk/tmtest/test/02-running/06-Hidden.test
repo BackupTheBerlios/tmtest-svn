@@ -1,0 +1,21 @@
+# Ensures that we don't run hidden tests.
+
+
+MKDIR dir
+cd "$dir"
+
+cat > .hidden.test <<-EOL
+	echo hidden
+	STDOUT:
+	hidden
+EOL
+
+$tmtest -q
+rm .hidden.test
+
+
+STDOUT:
+
+Processing .
+
+0 tests run, 0 successes, 0 failures.

@@ -1,0 +1,21 @@
+# Scott Bronson
+# 26 Feb 2006
+#
+# Ensures that we correctly add the trailing newline when outputting
+# the test.
+#
+# Also see: 09-NoNL.test
+#
+# (back when we were parsing tests using re2c, lines needed to be
+# less than BUFSIZ and the results always had to end in a newline).
+
+$tmtest -o -q - <<-EOL | INDENT "   "
+	echo -n Howdy
+	STDOUT: -n
+	Howdy
+EOL
+
+STDOUT:
+   echo -n Howdy
+   STDOUT: -n
+   Howdy

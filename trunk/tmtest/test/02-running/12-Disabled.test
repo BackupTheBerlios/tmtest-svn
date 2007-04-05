@@ -1,0 +1,14 @@
+# Ensures that a disabled test doesn't run.
+
+
+$tmtest -q - <<-EOL
+	DISABLED
+	echo it ran
+	STDOUT:
+	it ran
+EOL
+
+STDOUT:
+dis  (STDIN)                   
+
+1 test run, 0 successes, 0 failures.

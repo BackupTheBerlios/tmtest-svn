@@ -1,0 +1,60 @@
+If you run tmtest -d on a disabled test, it produces a tiny diff with the
+word "Disabled" in its stderr.  If you blindly pipe this diff to patch,
+it will destroy the output section of your test file.  This is easy enough
+to fix -- just re-enable the test and patch it again.  This will be
+fixed in tmtest 1.2 when we parse the status file asynchronously.  We
+will notice that the test is disabled and refuse to produce the diff.
+
+
+Bash Gotchas:
+
+These are bugs that tmtest inherits from Bash:
+
+Bash3 has removed the ability to set LINENO, so you may see the
+wrong line number be printed if there's an error.  If you want to
+see the correct line numbers, use Bash2.  It's an unfortunate
+regression.  I've worked around it so that it only affects tests
+piped in on stdin.
+
+
+The <<-EOL operator strips ALL tabs from the front of each line.
+This is bad because it means you can't nest heredocs:
+
+	cmd1 <<-EOL
+		cmd2 <<-EOL
+			cmd3
+		EOL
+	EOL
+
+The first heredoc flattens everything and then the EOLs get mixed up.
+Sometimes you can work around this by renaming your EOL words,
+sometimes you can't.
+
+Another problem is that Bash ONLY strips tabs.  This makes it a royal
+pain to edit heredocs in an editor that expands tabs.  Thanks to
+how common Python is becoming, many editors are expanding tabs now!
+If you edit a bash script with an editor that automatically expands
+tabs, you may destroy the heredoc even though you never even saw it!
+Invisible syntax problems always suck.
+
+What bash *SHOULD* do (and what tmtest did before it was integrated
+with Bash) is discover the whitespace sequence indenting the
+first line of a heredoc, then remove exactly that sequence from all
+subsequent lines.  If a line doesn't begin with that sequence, then
+it remains unchanged.  This is safer and more useful than just blowing away
+all tabs wholesale!
+
+
+Strange Bashisms:
+
+Why does &> redirect both stdout and stderr to a file, but &| doesn't
+redirect both stdout and stderr to a pipe?
+
+Why is the unset command totally unrelated to the set command?
+
+Why can I "exec > file" but I can't "exec | prog"?
+	I have to exec > >(prog).  Seems asymmetrical.
+
+Why oh why can't I get the pid of the most recent process substitution?
+	(exec > >(tr a-z A-Z); pid=$!; echo howdy; wait $pid)
+	Except that $! is not set for process substitutions.

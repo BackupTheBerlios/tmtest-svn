@@ -1,0 +1,32 @@
+# Ensures that a test disabled by a config file doesn't run.
+
+MKDIR dir
+cd "$dir"
+
+cat > tmtest.conf <<-EOs
+	DISABLED
+EOs
+
+cat > t1.test <<-EOs
+	echo hi
+	STDOUT:
+	hi
+EOs
+
+cat > t2.test <<-EOs
+	echo he
+	STDOUT:
+	he
+EOs
+
+$tmtest -q | REPLACE "$dir" /tmp/DIR
+rm tmtest.conf t1.test t2.test
+
+
+STDOUT:
+
+Processing .
+dis  t1.test                   by /tmp/DIR/tmtest.conf
+dis  t2.test                   by /tmp/DIR/tmtest.conf
+
+2 tests run, 0 successes, 0 failures.

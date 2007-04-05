@@ -1,0 +1,24 @@
+# author: Scott Bronson
+# date:   14 Nov 2004
+
+# Verifies what happens when a diff is aborted and gives a reason.
+
+
+$tmtest -d - <<-EOL | FIX_DIFF
+	ABORT: This is the reason
+	echo "right output"
+	STDOUT:
+	wrong output
+EOL
+
+
+STDERR:
+ERROR Test was aborted: This is the reason
+STDOUT:
+--- /tmp/FILE DATE TIME TZ
++++ - DATE TIME TZ
+@@ -1,4 +1,2 @@
+ ABORT: This is the reason
+ echo "right output"
+-STDOUT:
+-wrong output
